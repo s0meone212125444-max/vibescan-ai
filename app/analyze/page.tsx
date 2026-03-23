@@ -18,19 +18,32 @@ export default function AnalyzePage() {
   const tooShort = charCount > 0 && charCount < 100
   const tooLong = charCount > 5000
 
-  const handleSubmit = () => {
+  const [redirecting, setRedirecting] = useState(false)
+
+  const handleSubmit = async () => {
     if (!isValid) return
+    setRedirecting(true)
 
     // Generate unique text ID
     const textId = crypto.randomUUID()
 
     // Save to sessionStorage
+    sessionStorage.setItem(textId, text)
     sessionStorage.setItem('analysisText', text)
     sessionStorage.setItem('textId', textId)
 
-    // Redirect to Paddle checkout
-    const productId = process.env.NEXT_PUBLIC_PADDLE_PRODUCT_ID || ''
-    window.location.href = `https://buy.paddle.com/product/${productId}?passthrough=${textId}`
+    // Try saving to KV as backup
+    try {
+      await fetch('/api/save-text', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ textId, texts: text }),
+      })
+    } catch { /* ok if fails locally */ }
+
+    // Redirect to Whop checkout
+    const checkoutUrl = process.env.NEXT_PUBLIC_WHOP_CHECKOUT_URL || 'https://whop.com/checkout/plan_6ER2P6s6XzTty'
+    window.location.href = `${checkoutUrl}?d=${textId}`
   }
 
   return (
@@ -84,7 +97,7 @@ export default function AnalyzePage() {
           {/* Submit button */}
           <button
             onClick={handleSubmit}
-            disabled={!isValid}
+            disabled={!isValid || redirecting}
             className="w-full mt-6 bg-gradient-to-r from-primary to-secondary text-white font-bold text-lg py-5 rounded-full transition-all hover:shadow-[0_0_40px_rgba(139,92,246,0.5)] hover:scale-[1.02] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
           >
             Continue to Payment – $2.99
