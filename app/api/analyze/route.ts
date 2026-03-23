@@ -58,17 +58,27 @@ RESPOND ONLY WITH VALID JSON. No other text.`
 
 export async function POST(request: Request) {
   try {
-    const { orderId, texts } = await request.json()
+    const { texts } = await request.json()
 
-    if (!orderId || !texts) {
-      return NextResponse.json({ error: 'Missing orderId or texts' }, { status: 400 })
+    if (!texts) {
+      return NextResponse.json({ error: 'No conversation provided' }, { status: 400 })
     }
 
     if (texts.length < 100 || texts.length > 5000) {
       return NextResponse.json({ error: 'Text must be 100-5000 characters' }, { status: 400 })
     }
 
-    // Call Groq
+    // TODO: Add Whop payment verification here when WHOP_API_KEY is available
+    // const whopApiKey = process.env.WHOP_API_KEY
+    // if (whopApiKey && payment_id) {
+    //   const res = await fetch(`https://api.whop.com/api/v2/payments/${payment_id}`, {
+    //     headers: { Authorization: `Bearer ${whopApiKey}` }
+    //   })
+    //   const payment = await res.json()
+    //   if (payment.status !== 'succeeded') return NextResponse.json({ error: 'Payment not verified' }, { status: 401 })
+    // }
+
+    // Call Groq AI
     const completion = await groq.chat.completions.create({
       model: 'llama-3.1-70b-versatile',
       messages: [
@@ -81,22 +91,21 @@ export async function POST(request: Request) {
 
     const content = completion.choices[0]?.message?.content
     if (!content) {
-      return NextResponse.json({ error: 'AI analysis failed' }, { status: 500 })
+      return NextResponse.json({ error: 'AI analysis failed. Please try again.' }, { status: 500 })
     }
 
     const analysis = JSON.parse(content)
 
-    // Store in Vercel KV if available
-    try {
-      const { kv } = await import('@vercel/kv')
-      await kv.set(`analysis:${orderId}`, JSON.stringify(analysis), { ex: 86400 }) // 24h TTL
-    } catch {
-      // KV not available (local dev) - that's ok, we return directly
-    }
+    // TODO: Store in Vercel KV when available
+    // const { kv } = await import('@vercel/kv')
+    // await kv.set(`analysis:${payment_id}`, JSON.stringify(analysis), { ex: 86400 })
 
     return NextResponse.json(analysis)
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Analysis failed'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('Analysis error:', error)
+    return NextResponse.json(
+      { error: 'Analysis temporarily unavailable. Please try again in a moment.' },
+      { status: 500 }
+    )
   }
 }

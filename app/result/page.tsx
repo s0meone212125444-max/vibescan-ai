@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   CheckCircle, XCircle, AlertTriangle, Lightbulb, Share2,
-  ArrowRight, Brain, Heart, Copy, Check
+  ArrowRight, Brain, Check
 } from 'lucide-react'
 
 interface Analysis {
@@ -71,7 +71,8 @@ function ScoreCircle({ score }: { score: number }) {
 
 function ResultContent() {
   const searchParams = useSearchParams()
-  const orderId = searchParams.get('order_id')
+  const textId = searchParams.get('d') || searchParams.get('text_id')
+  // payment_id available for future verification: searchParams.get('payment_id')
 
   const [analysis, setAnalysis] = useState<Analysis | null>(null)
   const [loading, setLoading] = useState(true)
@@ -87,48 +88,38 @@ function ResultContent() {
   }, [loading])
 
   const runAnalysis = useCallback(async () => {
-    const texts = sessionStorage.getItem('analysisText')
+    // Retrieve texts from sessionStorage
+    let texts = textId ? sessionStorage.getItem(textId) : null
+    if (!texts) texts = sessionStorage.getItem('analysisText')
+
     if (!texts) {
-      setError('No conversation found. Please go back and paste your texts.')
+      setError('Session expired. Please go back and paste your texts again.')
       setLoading(false)
       return
     }
 
     try {
+      // Call analyze API directly — no payment verification for initial launch
+      // TODO: Add payment verification via Whop API when WHOP_API_KEY is available
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId: orderId || 'direct', texts }),
+        body: JSON.stringify({ texts }),
       })
 
-      if (!res.ok) throw new Error('Analysis failed')
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || 'Analysis failed')
+      }
 
       const data = await res.json()
       setAnalysis(data)
       setLoading(false)
-    } catch {
-      // Try polling KV if direct analysis fails
-      let attempts = 0
-      const poll = setInterval(async () => {
-        attempts++
-        if (attempts > 15) {
-          clearInterval(poll)
-          setError('Analysis is taking longer than expected. Please try again.')
-          setLoading(false)
-          return
-        }
-        try {
-          const res = await fetch(`/api/analysis?order_id=${orderId}`)
-          const data = await res.json()
-          if (data.status === 'complete') {
-            clearInterval(poll)
-            setAnalysis(data.analysis)
-            setLoading(false)
-          }
-        } catch { /* keep polling */ }
-      }, 2000)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Analysis failed. Please try again.')
+      setLoading(false)
     }
-  }, [orderId])
+  }, [textId])
 
   useEffect(() => {
     runAnalysis()
@@ -192,8 +183,6 @@ function ResultContent() {
 
   if (!analysis) return null
 
-  const scoreColor = analysis.score >= 71 ? '#22C55E' : analysis.score >= 41 ? '#EAB308' : '#EF4444'
-
   return (
     <div className="min-h-screen bg-bg-dark py-12 px-6">
       <div className="max-w-2xl mx-auto space-y-8">
@@ -212,7 +201,6 @@ function ResultContent() {
         {/* SIGNALS */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
           className="grid md:grid-cols-2 gap-4">
-          {/* Positive */}
           <div className="bg-bg-card border border-white/5 rounded-2xl p-5">
             <h3 className="text-accent-green font-bold flex items-center gap-2 mb-3">
               <CheckCircle size={18} /> Positive Signals
@@ -230,7 +218,6 @@ function ResultContent() {
             )}
           </div>
 
-          {/* Negative */}
           <div className="bg-bg-card border border-white/5 rounded-2xl p-5">
             <h3 className="text-accent-red font-bold flex items-center gap-2 mb-3">
               <XCircle size={18} /> Negative Signals

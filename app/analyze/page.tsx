@@ -13,35 +13,26 @@ Them: Not really`
 
 export default function AnalyzePage() {
   const [text, setText] = useState('')
+  const [redirecting, setRedirecting] = useState(false)
   const charCount = text.length
   const isValid = charCount >= 100 && charCount <= 5000
   const tooShort = charCount > 0 && charCount < 100
   const tooLong = charCount > 5000
 
-  const [redirecting, setRedirecting] = useState(false)
-
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!isValid) return
     setRedirecting(true)
 
     // Generate unique text ID
-    const textId = crypto.randomUUID()
+    const textId = Math.random().toString(36).substring(2)
 
-    // Save to sessionStorage
+    // Save texts to sessionStorage ONLY (no KV yet)
     sessionStorage.setItem(textId, text)
     sessionStorage.setItem('analysisText', text)
     sessionStorage.setItem('textId', textId)
 
-    // Try saving to KV as backup
-    try {
-      await fetch('/api/save-text', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ textId, texts: text }),
-      })
-    } catch { /* ok if fails locally */ }
-
     // Redirect to Whop checkout
+    // TODO: Later add KV backup here for cross-device support
     const checkoutUrl = process.env.NEXT_PUBLIC_WHOP_CHECKOUT_URL || 'https://whop.com/checkout/plan_6ER2P6s6XzTty'
     window.location.href = `${checkoutUrl}?d=${textId}`
   }
@@ -100,7 +91,7 @@ export default function AnalyzePage() {
             disabled={!isValid || redirecting}
             className="w-full mt-6 bg-gradient-to-r from-primary to-secondary text-white font-bold text-lg py-5 rounded-full transition-all hover:shadow-[0_0_40px_rgba(139,92,246,0.5)] hover:scale-[1.02] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
           >
-            Continue to Payment – $2.99
+            {redirecting ? 'Redirecting to payment...' : 'Continue to Payment – $2.99'}
           </button>
 
           <p className="text-text-muted text-sm text-center mt-4 flex items-center justify-center gap-2">
