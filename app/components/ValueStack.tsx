@@ -86,10 +86,15 @@ export default function ValueStack() {
           <div className="flex justify-between font-bold text-text-white">
             <span>Total Value</span><span>$424+</span>
           </div>
-          <div className="mt-4 bg-gradient-to-r from-primary to-secondary rounded-xl py-3 px-4">
-            <div className="text-2xl font-black">$2.99</div>
-            <div className="text-xs opacity-80">You save $421.01 (99.3%)</div>
-          </div>
+          <motion.a
+            href="https://whop.com/checkout/plan_6ER2P6s6XzTty"
+            className="block mt-4 bg-gradient-to-r from-primary to-secondary rounded-xl py-4 px-4 hover:brightness-110 transition-all"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <div className="text-2xl font-black">Get All This — $2.99</div>
+            <div className="text-xs opacity-80">You save $421.01 (99.3%) →</div>
+          </motion.a>
         </motion.div>
       </div>
     </section>

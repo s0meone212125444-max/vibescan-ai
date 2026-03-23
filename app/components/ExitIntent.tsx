@@ -9,6 +9,16 @@ export default function ExitIntent() {
 
   useEffect(() => {
     let triggered = false
+
+    // Show after 1 min 5 sec
+    const timer = setTimeout(() => {
+      if (!triggered) {
+        triggered = true
+        setShow(true)
+      }
+    }, 65000)
+
+    // Also show on mouse leave (desktop)
     const handler = (e: MouseEvent) => {
       if (e.clientY < 10 && !triggered) {
         triggered = true
@@ -16,7 +26,11 @@ export default function ExitIntent() {
       }
     }
     document.addEventListener('mouseleave', handler)
-    return () => document.removeEventListener('mouseleave', handler)
+
+    return () => {
+      clearTimeout(timer)
+      document.removeEventListener('mouseleave', handler)
+    }
   }, [])
 
   return (

@@ -19,20 +19,24 @@ export default function AnalyzePage() {
   const tooShort = charCount > 0 && charCount < 100
   const tooLong = charCount > 5000
 
+  // Check for demo mode
+  const isDemo = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('demo') === 'true'
+
   const handleSubmit = () => {
     if (!isValid) return
     setRedirecting(true)
 
-    // Generate unique text ID
     const textId = Math.random().toString(36).substring(2)
-
-    // Save texts to sessionStorage ONLY (no KV yet)
     sessionStorage.setItem(textId, text)
     sessionStorage.setItem('analysisText', text)
     sessionStorage.setItem('textId', textId)
 
-    // Redirect to Whop checkout
-    // TODO: Later add KV backup here for cross-device support
+    if (isDemo) {
+      // Demo mode: skip payment, go straight to demo results
+      window.location.href = `/result?d=${textId}&demo=true`
+      return
+    }
+
     const checkoutUrl = process.env.NEXT_PUBLIC_WHOP_CHECKOUT_URL || 'https://whop.com/checkout/plan_6ER2P6s6XzTty'
     window.location.href = `${checkoutUrl}?d=${textId}`
   }

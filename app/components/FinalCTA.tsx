@@ -1,7 +1,30 @@
 'use client'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
 const CHECKOUT_URL = 'https://whop.com/checkout/plan_6ER2P6s6XzTty'
+
+function LiveCounter() {
+  const [count, setCount] = useState(487)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCount((prev) => {
+        // Randomly increase or decrease by 1-3
+        const delta = Math.random() > 0.4 ? Math.ceil(Math.random() * 3) : -Math.ceil(Math.random() * 2)
+        return Math.max(400, Math.min(600, prev + delta))
+      })
+    }, 3000)
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <div className="mt-8 flex items-center justify-center gap-2 text-sm text-text-gray">
+      <span className="w-2.5 h-2.5 bg-accent-red rounded-full animate-pulse" />
+      {count} people analyzing right now
+    </div>
+  )
+}
 
 export default function FinalCTA() {
   return (
@@ -96,11 +119,8 @@ export default function FinalCTA() {
           </p>
         </div>
 
-        {/* Live counter */}
-        <div className="mt-8 flex items-center justify-center gap-2 text-sm text-text-gray">
-          <span className="w-2.5 h-2.5 bg-accent-red rounded-full animate-pulse" />
-          487 people analyzing right now
-        </div>
+        {/* Live counter - periodically increases and decreases */}
+        <LiveCounter />
       </div>
     </section>
   )

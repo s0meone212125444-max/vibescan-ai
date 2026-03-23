@@ -69,10 +69,73 @@ function ScoreCircle({ score }: { score: number }) {
   )
 }
 
+function generateDemoAnalysis(): Analysis {
+  const rand = Math.random()
+  if (rand < 0.3) {
+    // Low score
+    const score = Math.floor(Math.random() * 21) + 15
+    return {
+      score,
+      verdict: "They're not interested. The signals are clear — you're putting in all the effort while they give you the bare minimum.",
+      positive_signals: ['They do respond eventually'],
+      negative_signals: [
+        'One-word replies are their default',
+        'Never initiates conversation',
+        'Takes 6+ hours to respond consistently',
+        'No questions asked about your life',
+      ],
+      red_flags: [
+        'Classic breadcrumbing pattern detected',
+        'Only texts late at night (attention-seeking)',
+        'Emoji usage dropped 80% over 2 weeks',
+      ],
+      advice: "Stop texting first for 1 week. If they don't reach out, you have your answer. Don't waste another month on someone who treats you as an option.",
+    }
+  } else if (rand < 0.7) {
+    // Medium score
+    const score = Math.floor(Math.random() * 21) + 45
+    return {
+      score,
+      verdict: "Mixed signals detected. There's some interest, but they're either unsure, distracted, or keeping options open.",
+      positive_signals: [
+        'Responds to most messages',
+        'Uses emojis occasionally',
+        'Has initiated conversation a few times',
+      ],
+      negative_signals: [
+        'Response times are inconsistent (1h to 8h)',
+        'Rarely asks follow-up questions',
+        'Conversations often die without resolution',
+      ],
+      red_flags: [
+        'Hot and cold pattern — engaged one day, distant the next',
+      ],
+      advice: "Pull back slightly and mirror their energy. If they step up when you step back, there's potential. If not, you're more invested than they are.",
+    }
+  } else {
+    // High score
+    const score = Math.floor(Math.random() * 21) + 75
+    return {
+      score,
+      verdict: "They're genuinely interested! The patterns show real engagement, effort, and emotional investment in your conversations.",
+      positive_signals: [
+        'Responds quickly and consistently',
+        'Asks meaningful questions about your life',
+        'Initiates conversations regularly',
+        'Uses playful and affectionate language',
+        'Remembers details from past conversations',
+      ],
+      negative_signals: [],
+      red_flags: [],
+      advice: "The interest is real. Ask them out THIS WEEK — don't wait and risk losing momentum. Be direct: suggest a specific day, time, and place.",
+    }
+  }
+}
+
 function ResultContent() {
   const searchParams = useSearchParams()
   const textId = searchParams.get('d') || searchParams.get('text_id')
-  // payment_id available for future verification: searchParams.get('payment_id')
+  const isDemo = searchParams.get('demo') === 'true'
 
   const [analysis, setAnalysis] = useState<Analysis | null>(null)
   const [loading, setLoading] = useState(true)
@@ -88,6 +151,14 @@ function ResultContent() {
   }, [loading])
 
   const runAnalysis = useCallback(async () => {
+    // Demo mode: generate fake results after a short delay
+    if (isDemo) {
+      await new Promise((r) => setTimeout(r, 2500))
+      setAnalysis(generateDemoAnalysis())
+      setLoading(false)
+      return
+    }
+
     // Retrieve texts from sessionStorage
     let texts = textId ? sessionStorage.getItem(textId) : null
     if (!texts) texts = sessionStorage.getItem('analysisText')
@@ -99,8 +170,6 @@ function ResultContent() {
     }
 
     try {
-      // Call analyze API directly — no payment verification for initial launch
-      // TODO: Add payment verification via Whop API when WHOP_API_KEY is available
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -119,7 +188,7 @@ function ResultContent() {
       setError(err instanceof Error ? err.message : 'Analysis failed. Please try again.')
       setLoading(false)
     }
-  }, [textId])
+  }, [textId, isDemo])
 
   useEffect(() => {
     runAnalysis()
@@ -184,7 +253,13 @@ function ResultContent() {
   if (!analysis) return null
 
   return (
-    <div className="min-h-screen bg-bg-dark py-12 px-6">
+    <div className="min-h-screen bg-bg-dark py-12 px-6 relative">
+      {/* Demo watermark */}
+      {isDemo && (
+        <div className="fixed top-4 right-4 z-50 bg-accent-yellow/20 border border-accent-yellow/40 text-accent-yellow text-xs font-bold px-3 py-1.5 rounded-lg">
+          Demo Mode
+        </div>
+      )}
       <div className="max-w-2xl mx-auto space-y-8">
         {/* SCORE */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
