@@ -349,6 +349,58 @@ function ResultContent() {
             {copied ? <><Check size={18} /> Copied!</> : <><Share2 size={18} /> Share Score</>}
           </button>
         </motion.div>
+
+        {/* ROASTMYRIZZ CROSS-SELL BANNER */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.4 }}
+          className="bg-gradient-to-br from-primary/10 via-secondary/10 to-primary/5 border border-primary/20 rounded-2xl p-6">
+          <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-3">
+            Also from the makers of VibeScan
+          </p>
+          <h3 className="text-lg font-bold text-text-white mb-2">
+            Is Your Dating Profile Getting You Enough Matches?
+          </h3>
+          <p className="text-text-gray text-sm mb-5">
+            Find out in 2 minutes with a free AI roast of your profile
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-5 mb-5">
+            {/* Before/After */}
+            <div className="flex items-center justify-center gap-4">
+              <div className="bg-bg-dark/60 rounded-xl px-4 py-2.5 text-center">
+                <p className="text-[10px] text-text-muted uppercase">Before</p>
+                <p className="text-2xl font-black text-accent-red">31</p>
+              </div>
+              <ArrowRight className="text-primary" size={20} />
+              <div className="bg-bg-dark/60 rounded-xl px-4 py-2.5 text-center">
+                <p className="text-[10px] text-text-muted uppercase">After</p>
+                <p className="text-2xl font-black text-accent-green">87</p>
+              </div>
+            </div>
+            {/* Bullets */}
+            <ul className="space-y-1.5 flex-1">
+              {[
+                'Free profile score',
+                'Brutal AI roast (share on TikTok)',
+                'Optimized bio + photo strategy',
+                '820K+ profiles improved',
+              ].map((item) => (
+                <li key={item} className="text-text-gray text-xs flex items-center gap-2">
+                  <CheckCircle className="text-primary shrink-0" size={12} /> {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <a
+            href="https://roastmyrizz.vercel.app/?ref=vibescan"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full text-center bg-gradient-to-r from-primary to-secondary text-white font-bold py-3.5 rounded-full hover:shadow-[0_0_30px_rgba(139,92,246,0.4)] transition-all"
+          >
+            Get My Free Score &rarr;
+          </a>
+          <p className="text-text-muted text-[11px] text-center mt-2">Same AI tech that just analyzed your texts</p>
+        </motion.div>
       </div>
     </div>
   )
