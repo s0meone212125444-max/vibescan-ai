@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 
 type AnalyzeResult = {
   vibeScore: number
@@ -148,13 +149,30 @@ export default function FrictionlessLanding() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#070B16] text-text-white">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-24 top-[-100px] h-80 w-80 rounded-full bg-[#7C5CFF]/35 blur-3xl" />
-        <div className="absolute right-[-140px] top-[220px] h-[24rem] w-[24rem] rounded-full bg-cyan-400/20 blur-3xl" />
-        <div className="absolute bottom-[-150px] left-1/2 h-[24rem] w-[24rem] -translate-x-1/2 rounded-full bg-fuchsia-400/20 blur-3xl" />
+        <motion.div
+          className="absolute -left-24 top-[-100px] h-80 w-80 rounded-full bg-[#7C5CFF]/35 blur-3xl"
+          animate={{ y: [0, 20, 0] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute right-[-140px] top-[220px] h-[24rem] w-[24rem] rounded-full bg-cyan-400/20 blur-3xl"
+          animate={{ y: [0, -22, 0] }}
+          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute bottom-[-150px] left-1/2 h-[24rem] w-[24rem] -translate-x-1/2 rounded-full bg-fuchsia-400/20 blur-3xl"
+          animate={{ scale: [1, 1.06, 1] }}
+          transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+        />
       </div>
 
       <div className="relative mx-auto w-full max-w-md px-4 pb-14 pt-6">
-        <section className="space-y-4 rounded-3xl border border-white/20 bg-white/10 p-4 backdrop-blur-xl">
+        <motion.section
+          className="space-y-4 rounded-3xl border border-white/20 bg-white/10 p-4 backdrop-blur-xl"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+        >
           <div className="mb-3">
             <svg className="h-9 w-[170px]" viewBox="0 0 320 80" role="img" aria-label="VibeScan logo">
               <use href="/vibescan-logo-system.svg#logo-full" />
@@ -186,21 +204,25 @@ export default function FrictionlessLanding() {
             />
 
             <div className="mt-3 grid grid-cols-2 gap-2">
-              <button
+              <motion.button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 className="rounded-xl border border-white/20 bg-white/10 px-3 py-3 text-sm font-semibold text-white backdrop-blur-xl"
+                whileHover={{ y: -1 }}
+                whileTap={{ scale: 0.99 }}
               >
                 Upload screenshot
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 type="button"
                 disabled={!canAnalyze || isLoading}
                 onClick={() => runAnalysis(input)}
                 className="rounded-xl bg-gradient-to-r from-[#7C5CFF] to-[#A18BFF] px-3 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(124,92,255,0.4)] disabled:opacity-50"
+                whileHover={{ y: -1 }}
+                whileTap={{ scale: 0.99 }}
               >
                 {isLoading ? 'Analyzing...' : 'Run free preview'}
-              </button>
+              </motion.button>
             </div>
 
             {screenshotName ? <p className="mt-2 text-xs text-white/55">Attached: {screenshotName}</p> : null}
@@ -208,10 +230,15 @@ export default function FrictionlessLanding() {
 
             <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={onUpload} />
           </div>
-        </section>
+        </motion.section>
 
         <section className="mt-5 space-y-3">
-          <div className="rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-xl">
+          <motion.div
+            className="rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-xl"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.12 }}
+          >
             <p className="text-xs uppercase tracking-wider text-white/55">Vibe Score</p>
             <div className="mt-1 flex items-end gap-2">
               <p className="text-4xl font-black text-[#CFC3FF]">{analysis ? analysis.vibeScore : '--'}</p>
@@ -220,44 +247,59 @@ export default function FrictionlessLanding() {
             <p className="mt-2 text-sm text-white/80">
               {analysis ? analysis.diagnosis : 'Your score and plain-English diagnosis show up here in seconds.'}
             </p>
-          </div>
+          </motion.div>
 
           {[
             { title: 'What you sent', content: details.whatYouSent },
             { title: 'How it reads', content: details.howItReads },
             { title: 'What to send instead', content: details.whatToSendInstead },
           ].map((section) => (
-            <div key={section.title} className="rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-xl">
+            <motion.div
+              key={section.title}
+              className="rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-xl"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
               <p className="text-sm font-semibold text-white">{section.title}</p>
               <p className={`mt-2 text-sm text-white/80 ${isUnlocked ? '' : 'blur-sm select-none'}`}>
                 {section.content}
               </p>
-            </div>
+            </motion.div>
           ))}
 
           {analysis ? (
             <>
               <div className="grid grid-cols-2 gap-2">
-                <a
+                <motion.a
                   href={CHECKOUT_URL}
                   className="rounded-xl bg-gradient-to-r from-[#7C5CFF] to-[#A18BFF] px-3 py-3 text-center text-sm font-bold text-white shadow-[0_12px_30px_rgba(124,92,255,0.45)]"
+                  whileHover={{ y: -1 }}
+                  whileTap={{ scale: 0.99 }}
                 >
                   Unlock full analysis for $3
-                </a>
-                <button
+                </motion.a>
+                <motion.button
                   type="button"
                   onClick={() => setShowEmailModal(true)}
                   className="rounded-xl border border-white/20 bg-white/10 px-3 py-3 text-sm font-bold text-white backdrop-blur-xl"
+                  whileHover={{ y: -1 }}
+                  whileTap={{ scale: 0.99 }}
                 >
                   Send full breakdown to my email free
-                </button>
+                </motion.button>
               </div>
               <p className="text-center text-xs text-white/55">4,681 people checked their vibe this week</p>
             </>
           ) : null}
         </section>
 
-        <section className="mt-8 rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-xl">
+        <motion.section
+          className="mt-8 rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-xl"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.2 }}
+        >
           <p className="text-xs uppercase tracking-wider text-white/55">People like you</p>
           <p className="mt-3 text-sm leading-relaxed text-white/85">&ldquo;{testimonials[testimonialIndex].quote}&rdquo;</p>
           <p className="mt-2 text-xs text-white/55">{testimonials[testimonialIndex].name}</p>
@@ -269,7 +311,7 @@ export default function FrictionlessLanding() {
               />
             ))}
           </div>
-        </section>
+        </motion.section>
 
         {showEmailModal ? (
           <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/65 p-4 sm:items-center">
