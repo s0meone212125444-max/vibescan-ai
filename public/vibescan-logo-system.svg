@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" role="img" aria-labelledby="logoSystemTitle logoSystemDesc">
+  <title id="logoSystemTitle">VibeScan SVG logo system</title>
+  <desc id="logoSystemDesc">Includes three symbols: full horizontal logo, icon-only logo, and monochrome logo.</desc>
+
+  <defs>
+    <!-- Theme variables: swap in CSS for dark/light branding -->
+    <style>
+      :root {
+        --vs-accent: #7C5CFF;
+        --vs-slate: #0F172A;
+      }
+    </style>
+
+    <!-- Shared icon: rounded message form with embedded pulse line -->
+    <symbol id="vs-icon-base" viewBox="0 0 64 64" role="img" aria-labelledby="iconTitle iconDesc">
+      <title id="iconTitle">VibeScan icon</title>
+      <desc id="iconDesc">A message shape fused with a subtle pulse wave for mood analysis.</desc>
+      <path d="M16 10h32a10 10 0 0 1 10 10v15a10 10 0 0 1-10 10H33l-10 9 2-9H16A10 10 0 0 1 6 35V20a10 10 0 0 1 10-10Z" fill="var(--vs-slate)" />
+      <path d="M15 31h8l4-7 5 14 5-9h11" fill="none" stroke="var(--vs-accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M52 16c3 2 5 5 5 9 0 4-2 7-5 9" fill="none" stroke="var(--vs-accent)" stroke-width="2.5" stroke-linecap="round" />
+    </symbol>
+
+    <!-- Wordmark built from vector strokes (no external fonts) -->
+    <symbol id="vs-wordmark" viewBox="0 0 176 28" role="img" aria-labelledby="wordmarkTitle wordmarkDesc">
+      <title id="wordmarkTitle">VibeScan wordmark</title>
+      <desc id="wordmarkDesc">Custom geometric stroke wordmark for VibeScan.</desc>
+      <g fill="none" stroke="var(--vs-slate)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 2 10 26 18 2M28 2v24M40 2v24M40 2h10q6 0 6 6t-6 6H40M40 14h11q7 0 7 6t-7 6H40M68 2v24M68 2h14M68 14h12M68 26h14M98 5q-4-4-10-2-7 2-7 7 0 4 7 6l6 2q5 1 5 4 0 4-7 4H81M126 6q-3-4-9-4-10 0-10 12t10 12q6 0 9-4M136 26 145 2l9 24M140 16h10M160 26V2l14 24V2" />
+      </g>
+      <circle cx="28" cy="2" r="2.4" fill="var(--vs-accent)" />
+    </symbol>
+  </defs>
+
+  <!-- Variant 1: full lockup -->
+  <symbol id="logo-full" viewBox="0 0 320 80" role="img" aria-labelledby="fullTitle fullDesc">
+    <title id="fullTitle">VibeScan full horizontal logo</title>
+    <desc id="fullDesc">Icon and wordmark combined for headers and marketing placements.</desc>
+    <use href="#vs-icon-base" x="8" y="8" width="64" height="64" />
+    <use href="#vs-wordmark" x="86" y="26" width="220" height="28" />
+  </symbol>
+
+  <!-- Variant 2: icon-only square mark -->
+  <symbol id="logo-icon" viewBox="0 0 64 64" role="img" aria-labelledby="iconOnlyTitle iconOnlyDesc">
+    <title id="iconOnlyTitle">VibeScan icon only</title>
+    <desc id="iconOnlyDesc">Square icon variant suitable for favicons and app icons.</desc>
+    <use href="#vs-icon-base" width="64" height="64" />
+  </symbol>
+
+  <!-- Variant 3: monochrome lockup using currentColor -->
+  <symbol id="logo-mono" viewBox="0 0 320 80" role="img" aria-labelledby="monoTitle monoDesc">
+    <title id="monoTitle">VibeScan monochrome logo</title>
+    <desc id="monoDesc">Single-color icon and wordmark for constrained or inverted contexts.</desc>
+    <g fill="currentColor" stroke="currentColor">
+      <path d="M24 18h32a10 10 0 0 1 10 10v15a10 10 0 0 1-10 10H41l-10 9 2-9h-9A10 10 0 0 1 14 43V28a10 10 0 0 1 10-10Z" fill="none" stroke-width="3.5" stroke-linejoin="round" />
+      <path d="M23 39h8l4-7 5 14 5-9h11" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+      <g fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" transform="translate(86 26)">
+        <path d="M2 2 10 26 18 2M28 2v24M40 2v24M40 2h10q6 0 6 6t-6 6H40M40 14h11q7 0 7 6t-7 6H40M68 2v24M68 2h14M68 14h12M68 26h14M98 5q-4-4-10-2-7 2-7 7 0 4 7 6l6 2q5 1 5 4 0 4-7 4H81M126 6q-3-4-9-4-10 0-10 12t10 12q6 0 9-4M136 26 145 2l9 24M140 16h10M160 26V2l14 24V2" />
+      </g>
+    </g>
+  </symbol>
+</svg>

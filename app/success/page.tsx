@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { CheckCircle, ArrowRight, Brain } from 'lucide-react'
@@ -50,21 +50,21 @@ function ScoreCircle({ score }: { score: number }) {
 function SuccessContent() {
   const searchParams = useSearchParams()
   const isPurchased = searchParams.get('purchased') === 'true'
-  const [analysis, setAnalysis] = useState<Analysis | null>(null)
-
-  useEffect(() => {
-    // Load analysis from sessionStorage
+  const [analysis] = useState<Analysis | null>(() => {
+    if (typeof window === 'undefined') return null
     const keys = ['analysisResult', 'vibescanResult', 'analysis']
     for (const key of keys) {
       const raw = sessionStorage.getItem(key)
       if (raw) {
         try {
-          setAnalysis(JSON.parse(raw))
-          break
-        } catch { /* try next */ }
+          return JSON.parse(raw)
+        } catch {
+          continue
+        }
       }
     }
-  }, [])
+    return null
+  })
 
   if (!isPurchased) {
     return (

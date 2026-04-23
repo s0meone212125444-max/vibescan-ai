@@ -1,7 +1,7 @@
 'use client'
 import { motion } from 'framer-motion'
 
-const CHECKOUT_URL = 'https://whop.com/checkout/plan_6ER2P6s6XzTty'
+const TRY_URL = '/try'
 
 function TypingDots() {
   return (
@@ -119,20 +119,20 @@ export default function Hero() {
 
             {/* CTA */}
             <motion.a
-              href={CHECKOUT_URL}
+              href={TRY_URL}
               className="group relative inline-flex items-center gap-2 bg-gradient-to-r from-primary to-secondary text-white font-bold text-lg px-8 py-4 rounded-2xl shadow-lg shadow-primary/30"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               animate={{ boxShadow: ['0 10px 40px rgba(139,92,246,0.3)', '0 10px 40px rgba(139,92,246,0.5)', '0 10px 40px rgba(139,92,246,0.3)'] }}
               transition={{ boxShadow: { duration: 2, repeat: Infinity } }}
             >
-              Find Out in 30 Seconds — $2.99
+              Try for Free in 30 Seconds
               <span className="group-hover:translate-x-1 transition-transform">→</span>
             </motion.a>
 
             {/* Hover social proof */}
             <p className="mt-4 text-sm text-text-muted italic">
-              You&apos;ve already spent 3 hours overthinking this. Spend $3 for clarity.
+              You&apos;ve already spent 3 hours overthinking this. Try one scan free and decide after.
             </p>
 
             {/* Trust badges */}
